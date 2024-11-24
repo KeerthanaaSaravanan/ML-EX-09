@@ -1,9 +1,8 @@
-# BLENDED LEARNING
 # Implementation of Customer Segmentation Using K-Means Clustering
 <H3>NAME: KEERTHANA S</H3>
 <H3>REGISTER NO.: 212223240070</H3>
 <H3>EX. NO.9</H3>
-<H3>DATE:</H3>
+<H3>DATE: 28.10.24</H3>
 
 ## AIM:
 To implement customer segmentation using K-Means clustering on the Mall Customers dataset to group customers based on purchasing habits.
@@ -35,76 +34,58 @@ To implement customer segmentation using K-Means clustering on the Mall Customer
    Examine and visualize the resulting clusters to interpret patterns and relationships.
    
 ## Program:
-```
+```py
 # Import necessary libraries
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import silhouette_score
 
 # Step 1: Load the dataset
 url = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-ML0187EN-SkillsNetwork/labs/module%203/data/CustomerData.csv"
 data = pd.read_csv(url)
 
-# Step 2: Explore the data
-# Display the first few rows of the dataset along with column names for inspection
-print(data.head())
-print(data.columns)
+# Step 2: Select relevant features for clustering
+X = data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']]
 
-# Step 3: Select the relevant features for clustering
-# Here, we are using 'Age', 'Annual Income (k$)', and 'Spending Score (1-100)' for the clustering process
-features = ['Age', 'Annual Income (k$)', 'Spending Score (1-100)']
-X = data[features]
-
-# Step 4: Data Preprocessing
-# Standardize the features to enhance the performance of the K-Means algorithm
+# Step 3: Standardize the features
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Step 5: Identify the optimal number of clusters using the Elbow Method
-inertia_values = []  # List to store the inertia values (within-cluster sum of squares)
+# Step 4: Identify the optimal number of clusters using the Elbow Method
+inertia = []
 for i in range(1, 11):
     kmeans = KMeans(n_clusters=i, random_state=42)
     kmeans.fit(X_scaled)
-    inertia_values.append(kmeans.inertia_)
+    inertia.append(kmeans.inertia_)
 
-# Plot the elbow curve to visualize the optimal number of clusters
-plt.figure(figsize=(8, 4))
-plt.plot(range(1, 11), inertia_values, marker='o', linestyle='-')
+# Plot the elbow curve
+plt.plot(range(1, 11), inertia, marker='o')
 plt.xlabel('Number of Clusters')
 plt.ylabel('Inertia')
 plt.title('Elbow Method for Optimal Number of Clusters')
 plt.show()
 
-# Step 6: Train the K-Means model with the chosen number of clusters
-# Based on the elbow plot, we select the optimal number of clusters, which is 4 in this case
-optimal_clusters = 4
-kmeans = KMeans(n_clusters=optimal_clusters, random_state=42)
+# Step 5: Train the K-Means model with the optimal number of clusters (e.g., 4)
+kmeans = KMeans(n_clusters=4, random_state=42)
 kmeans.fit(X_scaled)
 
-# Step 7: Analyze and visualize the clusters
-# Add the cluster labels to the original dataset
+# Step 6: Add the cluster labels to the original dataset
 data['Cluster'] = kmeans.labels_
 
-# Calculate and display the silhouette score to evaluate the quality of clustering
-sil_score = silhouette_score(X_scaled, kmeans.labels_)
-print(f'Silhouette Score: {sil_score}')
-
-# Visualize the clusters based on 'Annual Income (k$)' and 'Spending Score (1-100)'
-plt.figure(figsize=(10, 6))
-sns.scatterplot(data=data, x='Annual Income (k$)', y='Spending Score (1-100)', hue='Cluster', palette='viridis', s=100, alpha=0.7)
-plt.title('Customer Segmentation based on Annual Income and Spending Score')
+# Step 7: Visualize the clusters
+plt.figure(figsize=(8, 6))
+plt.scatter(data['Annual Income (k$)'], data['Spending Score (1-100)'], c=data['Cluster'], cmap='viridis', s=100)
+plt.title('Customer Segmentation based on Income and Spending Score')
 plt.xlabel('Annual Income (k$)')
 plt.ylabel('Spending Score (1-100)')
-plt.legend(title='Cluster')
 plt.show()
 
 ```
 
 ## Output:
-<img width="863" alt="Screenshot 2024-11-14 at 11 36 27 AM" src="https://github.com/user-attachments/assets/c90ffe7b-c8c1-426c-aa01-9afbc33a834f">
+![image](https://github.com/user-attachments/assets/e8759283-0114-4bd0-91ec-9c5057162c72)
+![image](https://github.com/user-attachments/assets/69009c78-2992-4e54-b861-9bf60764a124)
 
 
 ## Result:
